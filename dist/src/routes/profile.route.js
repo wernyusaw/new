@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.profileRouter = void 0;
+const express_1 = require("express");
+const tsyringe_1 = require("tsyringe");
+const profile_controller_1 = require("../controllers/profile.controller");
+exports.profileRouter = (0, express_1.Router)();
+const profileController = tsyringe_1.container.resolve(profile_controller_1.ProfileController);
+exports.profileRouter.post("/profiles", profileController.createProfile.bind(profileController));
+exports.profileRouter.get("/profiles/:id", profileController.getProfileById.bind(profileController));
+exports.profileRouter.post("/profiles/:id/update", profileController.updateProfile.bind(profileController));

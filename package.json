@@ -1,0 +1,42 @@
+{
+  "name": "simple-ts-express",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "nodemon --watch . --ext ts --exec ts-node app.ts",
+    "dev:once": "ts-node app.ts",
+    "test": "jest --config jest/jest.config.ts --runInBand",
+    "test:watch": "jest --config jest/jest.config.ts --watch",
+    "docker:build": "docker build -f docker/Dockerfile -t simple-ts-express .",
+    "docker:up": "docker compose -f docker/docker-compose.yml up --build -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down",
+    "docker:rebuild": "npm run docker:down && npm run docker:up",
+    "docker:ps": "docker compose -f docker/docker-compose.yml ps",
+    "docker:logs": "docker compose -f docker/docker-compose.yml logs -f app",
+    "docker:restart:app": "docker compose -f docker/docker-compose.yml restart app",
+    "docker:kafka:topics": "docker compose -f docker/docker-compose.yml exec redpanda rpk topic list",
+    "docker:kafka:consume": "docker compose -f docker/docker-compose.yml exec redpanda rpk topic consume greeting.created -n 1 -f \"%v\\n\""
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "kafkajs": "^2.2.4",
+    "mysql2": "^3.23.0",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "@types/supertest": "^7.2.1",
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.greetingRouter = void 0;
+const express_1 = require("express");
+const tsyringe_1 = require("tsyringe");
+const greeting_controller_1 = require("../controllers/greeting.controller");
+exports.greetingRouter = (0, express_1.Router)();
+const greetingController = tsyringe_1.container.resolve(greeting_controller_1.GreetingController);
+exports.greetingRouter.get("/greeting", greetingController.getGreeting.bind(greetingController));
+exports.greetingRouter.get("/greeting/:name", greetingController.getGreetingByName.bind(greetingController));
