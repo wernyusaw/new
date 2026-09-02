@@ -1,14 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapMessageResponse = mapMessageResponse;
+exports.mapSuccessResponse = mapSuccessResponse;
 exports.mapErrorResponse = mapErrorResponse;
-exports.mapCalculateValueChangeResponse = mapCalculateValueChangeResponse;
-function mapMessageResponse(message) {
-    return { message };
+function mapSuccessResponse(resultCode, resultData, resultMessage = "success") {
+    return {
+        resultCode,
+        resultMessage,
+        resultData,
+    };
 }
-function mapErrorResponse(message) {
-    return { message };
-}
-function mapCalculateValueChangeResponse(input) {
-    return input;
+function mapErrorResponse(resultCode, resultMessage) {
+    return {
+        resultCode,
+        resultMessage,
+    };
 }

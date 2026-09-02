@@ -2,18 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mapGetGreetingRequest = mapGetGreetingRequest;
 exports.mapGetGreetingByNameRequest = mapGetGreetingByNameRequest;
+const zod_1 = require("zod");
+const optionalNameSchema = zod_1.z.string().trim().min(1).max(100);
+const requiredNameSchema = zod_1.z.string().trim().min(1).max(100);
 function mapGetGreetingRequest(input, appConfig) {
-    const rawName = input.query.name;
-    if (typeof rawName !== "string") {
-        return { name: appConfig.defaultName };
-    }
-    const normalizedName = rawName.trim();
+    const result = optionalNameSchema.safeParse(input.query.name);
     return {
-        name: normalizedName.length > 0 ? normalizedName : appConfig.defaultName,
+        name: result.success ? result.data : appConfig.defaultName,
     };
 }
 function mapGetGreetingByNameRequest(input) {
+    const result = requiredNameSchema.safeParse(input.params.name);
     return {
-        name: input.params.name.trim(),
+        name: result.success ? result.data : "",
     };
 }

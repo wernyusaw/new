@@ -9,6 +9,7 @@ app -> bootstrap -> route -> controller -> service -> repository/publisher
 ## 2) Core Rules
 - Read this file before answering project questions.
 - Keep controllers thin; business logic belongs in services/usecases.
+- Validate and normalize external request data with Zod in request mappers; return a DTO for valid input or null for invalid input.
 - Use DI tokens from src/di/injection-tokens.ts.
 - Put environment-dependent behavior in AppConfig (src/di/dependency-registry.ts).
 - Use a unified API response envelope for business endpoints.

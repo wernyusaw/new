@@ -1,154 +1,64 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mapCreateProfileRequest = mapCreateProfileRequest;
-exports.mapProfileByIdRequest = mapProfileByIdRequest;
+exports.mapProfileByIdQueryRequest = mapProfileByIdQueryRequest;
+exports.mapUpdateProfileIdRequest = mapUpdateProfileIdRequest;
 exports.mapUpdateProfileRequest = mapUpdateProfileRequest;
-function isProfileStatus(value) {
-    return value === "active" || value === "inactive";
-}
-function isNonEmptyString(value) {
-    return typeof value === "string" && value.trim().length > 0;
+const zod_1 = require("zod");
+const nonEmptyStringSchema = zod_1.z.string().trim().min(1);
+const dateSchema = nonEmptyStringSchema
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((value) => {
+    const date = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+});
+const profileStatusSchema = zod_1.z.enum(["active", "inactive"]);
+const profileAddressSchema = zod_1.z.object({
+    line1: nonEmptyStringSchema,
+    line2: zod_1.z.string().trim().optional(),
+    city: nonEmptyStringSchema,
+    state: nonEmptyStringSchema,
+    postalCode: nonEmptyStringSchema,
+    country: nonEmptyStringSchema,
+});
+const createProfileSchema = zod_1.z.object({
+    firstName: nonEmptyStringSchema,
+    lastName: nonEmptyStringSchema,
+    email: zod_1.z.string().trim().email(),
+    phone: nonEmptyStringSchema,
+    dateOfBirth: dateSchema,
+    status: profileStatusSchema,
+    address: profileAddressSchema,
+    preferences: zod_1.z.object({
+        allowMarketing: zod_1.z.boolean(),
+    }),
+});
+const updateProfileSchema = zod_1.z.object({
+    firstName: nonEmptyStringSchema.optional(),
+    lastName: nonEmptyStringSchema.optional(),
+    email: zod_1.z.string().trim().email().optional(),
+    phone: nonEmptyStringSchema.optional(),
+    dateOfBirth: dateSchema.optional(),
+    status: profileStatusSchema.optional(),
+    address: profileAddressSchema.partial().optional(),
+    preferences: zod_1.z.object({ allowMarketing: zod_1.z.boolean().optional() }).optional(),
+}).refine((value) => Object.keys(value).length > 0);
+const positiveIntegerSchema = zod_1.z.coerce.number().int().positive();
+function parsePositiveInteger(value) {
+    const result = positiveIntegerSchema.safeParse(value);
+    return result.success ? result.data : null;
 }
 function mapCreateProfileRequest(input) {
-    const body = input.body;
-    if (!isNonEmptyString(body.firstName)
-        || !isNonEmptyString(body.lastName)
-        || !isNonEmptyString(body.email)
-        || !isNonEmptyString(body.phone)
-        || !isNonEmptyString(body.dateOfBirth)
-        || !isProfileStatus(body.status)
-        || body.address === undefined
-        || !isNonEmptyString(body.address.line1)
-        || (body.address.line2 !== undefined && typeof body.address.line2 !== "string")
-        || !isNonEmptyString(body.address.city)
-        || !isNonEmptyString(body.address.state)
-        || !isNonEmptyString(body.address.postalCode)
-        || !isNonEmptyString(body.address.country)
-        || body.preferences === undefined
-        || typeof body.preferences.allowMarketing !== "boolean") {
-        return null;
-    }
-    return {
-        firstName: body.firstName.trim(),
-        lastName: body.lastName.trim(),
-        email: body.email.trim(),
-        phone: body.phone.trim(),
-        dateOfBirth: body.dateOfBirth.trim(),
-        status: body.status,
-        address: {
-            line1: body.address.line1.trim(),
-            line2: body.address.line2?.trim(),
-            city: body.address.city.trim(),
-            state: body.address.state.trim(),
-            postalCode: body.address.postalCode.trim(),
-            country: body.address.country.trim(),
-        },
-        preferences: {
-            allowMarketing: body.preferences.allowMarketing,
-        },
-    };
+    const result = createProfileSchema.safeParse(input.body);
+    return result.success ? result.data : null;
 }
-function mapProfileByIdRequest(input) {
-    const numericId = Number(input.params.id);
-    if (!Number.isInteger(numericId) || numericId <= 0) {
-        return null;
-    }
-    return numericId;
+function mapProfileByIdQueryRequest(input) {
+    return parsePositiveInteger(input.query.id);
+}
+function mapUpdateProfileIdRequest(input) {
+    return parsePositiveInteger(input.body.id);
 }
 function mapUpdateProfileRequest(input) {
-    const body = input.body;
-    const output = {};
-    if (body.firstName !== undefined) {
-        if (!isNonEmptyString(body.firstName)) {
-            return null;
-        }
-        output.firstName = body.firstName.trim();
-    }
-    if (body.lastName !== undefined) {
-        if (!isNonEmptyString(body.lastName)) {
-            return null;
-        }
-        output.lastName = body.lastName.trim();
-    }
-    if (body.email !== undefined) {
-        if (!isNonEmptyString(body.email)) {
-            return null;
-        }
-        output.email = body.email.trim();
-    }
-    if (body.phone !== undefined) {
-        if (!isNonEmptyString(body.phone)) {
-            return null;
-        }
-        output.phone = body.phone.trim();
-    }
-    if (body.dateOfBirth !== undefined) {
-        if (!isNonEmptyString(body.dateOfBirth)) {
-            return null;
-        }
-        output.dateOfBirth = body.dateOfBirth.trim();
-    }
-    if (body.status !== undefined) {
-        if (!isProfileStatus(body.status)) {
-            return null;
-        }
-        output.status = body.status;
-    }
-    if (body.address !== undefined) {
-        output.address = {};
-        if (body.address.line1 !== undefined) {
-            if (!isNonEmptyString(body.address.line1)) {
-                return null;
-            }
-            output.address.line1 = body.address.line1.trim();
-        }
-        if (body.address.line2 !== undefined) {
-            if (typeof body.address.line2 !== "string") {
-                return null;
-            }
-            output.address.line2 = body.address.line2.trim();
-        }
-        if (body.address.city !== undefined) {
-            if (!isNonEmptyString(body.address.city)) {
-                return null;
-            }
-            output.address.city = body.address.city.trim();
-        }
-        if (body.address.state !== undefined) {
-            if (!isNonEmptyString(body.address.state)) {
-                return null;
-            }
-            output.address.state = body.address.state.trim();
-        }
-        if (body.address.postalCode !== undefined) {
-            if (!isNonEmptyString(body.address.postalCode)) {
-                return null;
-            }
-            output.address.postalCode = body.address.postalCode.trim();
-        }
-        if (body.address.country !== undefined) {
-            if (!isNonEmptyString(body.address.country)) {
-                return null;
-            }
-            output.address.country = body.address.country.trim();
-        }
-    }
-    if (body.preferences !== undefined) {
-        output.preferences = {};
-        if (body.preferences.allowMarketing !== undefined) {
-            if (typeof body.preferences.allowMarketing !== "boolean") {
-                return null;
-            }
-            output.preferences.allowMarketing = body.preferences.allowMarketing;
-        }
-    }
-    const hasAnyChanges = output.firstName !== undefined
-        || output.lastName !== undefined
-        || output.email !== undefined
-        || output.phone !== undefined
-        || output.dateOfBirth !== undefined
-        || output.status !== undefined
-        || output.address !== undefined
-        || output.preferences !== undefined;
-    return hasAnyChanges ? output : null;
+    const result = updateProfileSchema.safeParse(input.body);
+    return result.success ? result.data : null;
 }

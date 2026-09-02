@@ -1,16 +1,15 @@
+import { z } from "zod";
+
 import type { GetHelloRequestDto } from "../../dtos/request/hello/get-hello-request.dto";
 import type { AppConfig } from "../../interfaces/app-config";
 import type { HelloRequestQueryInput } from "../../models/request/hello-request.model";
+
+const optionalNameSchema = z.string().trim().min(1).max(100);
+
 export function mapGetHelloRequest(input: HelloRequestQueryInput, appConfig: AppConfig): GetHelloRequestDto {
-  const rawName = input.query.name;
-
-  if (typeof rawName !== "string") {
-    return { name: appConfig.defaultName };
-  }
-
-  const normalizedName = rawName.trim();
+  const result = optionalNameSchema.safeParse(input.query.name);
 
   return {
-    name: normalizedName.length > 0 ? normalizedName : appConfig.defaultName,
+    name: result.success ? result.data : appConfig.defaultName,
   };
 }

@@ -1,0 +1,39 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const globals_1 = require("@jest/globals");
+const hello_request_mapper_1 = require("../../src/mappers/request/hello-request.mapper");
+const appConfigMock = {
+    defaultName: "Saw",
+    greetingStyle: "casual",
+    dbHost: "localhost",
+    dbPort: 3306,
+    dbUser: "app_user",
+    dbPassword: "app_password",
+    dbName: "app_db",
+    kafkaEnabled: false,
+    kafkaBrokers: ["localhost:9092"],
+    kafkaClientId: "simple-ts-express",
+    kafkaTopicGreetingCreated: "greeting.created",
+};
+(0, globals_1.describe)("hello request mapper", () => {
+    (0, globals_1.it)("uses default name when query.name is missing", () => {
+        const request = { query: {} };
+        (0, globals_1.expect)((0, hello_request_mapper_1.mapGetHelloRequest)(request, appConfigMock)).toEqual({ name: "Saw" });
+    });
+    (0, globals_1.it)("uses default name when query.name is not a string", () => {
+        const request = { query: { name: 123 } };
+        (0, globals_1.expect)((0, hello_request_mapper_1.mapGetHelloRequest)(request, appConfigMock)).toEqual({ name: "Saw" });
+    });
+    (0, globals_1.it)("uses default name when query.name is blank after trimming", () => {
+        const request = { query: { name: "   " } };
+        (0, globals_1.expect)((0, hello_request_mapper_1.mapGetHelloRequest)(request, appConfigMock)).toEqual({ name: "Saw" });
+    });
+    (0, globals_1.it)("trims and returns the provided query.name", () => {
+        const request = { query: { name: "  Tom  " } };
+        (0, globals_1.expect)((0, hello_request_mapper_1.mapGetHelloRequest)(request, appConfigMock)).toEqual({ name: "Tom" });
+    });
+    (0, globals_1.it)("uses default name when query.name exceeds the database limit", () => {
+        const request = { query: { name: "a".repeat(101) } };
+        (0, globals_1.expect)((0, hello_request_mapper_1.mapGetHelloRequest)(request, appConfigMock)).toEqual({ name: "Saw" });
+    });
+});

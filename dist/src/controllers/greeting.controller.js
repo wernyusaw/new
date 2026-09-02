@@ -26,31 +26,31 @@ let GreetingController = class GreetingController {
         const input = (0, greeting_request_mapper_1.mapGetGreetingRequest)(request, this.appConfig);
         try {
             const message = await this.greetingService.buildMessage(input);
-            response.json((0, api_response_mapper_1.mapMessageResponse)(message));
+            response.status(200).json((0, api_response_mapper_1.mapSuccessResponse)(200, { message }));
         }
         catch (error) {
             console.error("Failed to build and persist greeting", error);
-            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)("Internal Server Error"));
+            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)(500, "Internal Server Error"));
         }
     }
     async getGreetingByName(request, response) {
         const input = (0, greeting_request_mapper_1.mapGetGreetingByNameRequest)(request);
         if (input.name.length === 0) {
-            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)("Name is required"));
+            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)(400, "Name is required"));
             return;
         }
         try {
             const message = await this.greetingService.getGreetingByName(input);
             if (message) {
-                response.json((0, api_response_mapper_1.mapMessageResponse)(message));
+                response.status(200).json((0, api_response_mapper_1.mapSuccessResponse)(200, { message }));
             }
             else {
-                response.status(404).json((0, api_response_mapper_1.mapErrorResponse)("Greeting not found"));
+                response.status(404).json((0, api_response_mapper_1.mapErrorResponse)(404, "Greeting not found"));
             }
         }
         catch (error) {
             console.error("Failed to retrieve greeting", error);
-            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)("Internal Server Error"));
+            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)(500, "Internal Server Error"));
         }
     }
 };

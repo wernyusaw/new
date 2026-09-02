@@ -25,11 +25,11 @@ let CalculateController = class CalculateController {
     calculateValueChange(request, response) {
         const input = (0, calculate_request_mapper_1.mapCalculateValueChangeRequest)(request);
         if (input === null) {
-            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)("currentValue, changeBy and operation are required"));
+            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)(400, "currentValue, changeBy and operation are required"));
             return;
         }
         const result = this.calculateService.calculateValueChange(input);
-        response.status(200).json((0, api_response_mapper_1.mapCalculateValueChangeResponse)(result));
+        response.status(200).json((0, api_response_mapper_1.mapSuccessResponse)(200, result));
     }
 };
 exports.CalculateController = CalculateController;

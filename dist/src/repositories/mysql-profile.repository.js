@@ -104,11 +104,11 @@ let MySqlProfileRepository = class MySqlProfileRepository {
             const foundRows = statusRows;
             if (foundRows.length === 0) {
                 await connection.rollback();
-                return { kind: "not-found" };
+                return { status: "not-found" };
             }
             if (foundRows[0].status !== "active") {
                 await connection.rollback();
-                return { kind: "inactive" };
+                return { status: "inactive" };
             }
             await connection.execute(`
           UPDATE profiles
@@ -173,9 +173,9 @@ let MySqlProfileRepository = class MySqlProfileRepository {
             await connection.commit();
             const updatedProfile = await this.getProfileById(id);
             if (updatedProfile === null) {
-                return { kind: "not-found" };
+                return { status: "not-found" };
             }
-            return { kind: "updated", profile: updatedProfile };
+            return { status: "updated", profile: updatedProfile };
         }
         catch (error) {
             await connection.rollback();

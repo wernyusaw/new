@@ -25,7 +25,7 @@ let HelloController = class HelloController {
     getHello(request, response) {
         const input = (0, hello_request_mapper_1.mapGetHelloRequest)(request, this.appConfig);
         const message = this.helloService.buildMessage(input.name);
-        response.json((0, api_response_mapper_1.mapMessageResponse)(message));
+        response.status(200).json((0, api_response_mapper_1.mapSuccessResponse)(200, { message }));
     }
 };
 exports.HelloController = HelloController;

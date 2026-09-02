@@ -1,26 +1,18 @@
+import { z } from "zod";
+
 import type { CalculateValueChangeRequestBodyInput } from "../../models/request/calculate-value-change-request.model";
 import type { CalculateValueChangeRequestDto } from "../../dtos/request/calculate/calculate-value-change-request.dto";
+
+const calculateValueChangeSchema = z.object({
+  currentValue: z.number(),
+  changeBy: z.number(),
+  operation: z.enum(["increase", "decrease"]),
+});
 
 export function mapCalculateValueChangeRequest(
   input: CalculateValueChangeRequestBodyInput,
 ): CalculateValueChangeRequestDto | null {
-  const { currentValue, changeBy, operation } = input.body;
+  const result = calculateValueChangeSchema.safeParse(input.body);
 
-  const isValidOperation = operation === "increase" || operation === "decrease";
-
-  if (
-    typeof currentValue !== "number"
-    || !Number.isFinite(currentValue)
-    || typeof changeBy !== "number"
-    || !Number.isFinite(changeBy)
-    || !isValidOperation
-  ) {
-    return null;
-  }
-
-  return {
-    currentValue,
-    changeBy,
-    operation,
-  };
+  return result.success ? result.data : null;
 }

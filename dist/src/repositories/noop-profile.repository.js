@@ -45,10 +45,10 @@ let NoopProfileRepository = class NoopProfileRepository {
     async updateProfile(id, input) {
         const existingProfile = this.profiles.get(id);
         if (!existingProfile) {
-            return { kind: "not-found" };
+            return { status: "not-found" };
         }
         if (existingProfile.status !== "active") {
-            return { kind: "inactive" };
+            return { status: "inactive" };
         }
         const updatedProfile = {
             ...existingProfile,
@@ -72,7 +72,7 @@ let NoopProfileRepository = class NoopProfileRepository {
             },
         };
         this.profiles.set(id, updatedProfile);
-        return { kind: "updated", profile: updatedProfile };
+        return { status: "updated", profile: updatedProfile };
     }
 };
 exports.NoopProfileRepository = NoopProfileRepository;

@@ -8,5 +8,9 @@ const config = {
     setupFiles: ["<rootDir>/jest/jest.setup.ts"],
     moduleFileExtensions: ["ts", "js", "json"],
     clearMocks: true,
+    collectCoverage: false,
+    collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
+    coverageDirectory: "<rootDir>/coverage",
+    coverageReporters: ["text", "text-summary", "lcov", "html"],
 };
 exports.default = config;

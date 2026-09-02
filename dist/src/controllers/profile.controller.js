@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfileController = void 0;
 const tsyringe_1 = require("tsyringe");
+const response_status_1 = require("../constants/response-status");
 const injection_tokens_1 = require("../di/injection-tokens");
 const profile_request_mapper_1 = require("../mappers/request/profile-request.mapper");
 const api_response_mapper_1 = require("../mappers/response/api-response.mapper");
@@ -25,63 +26,63 @@ let ProfileController = class ProfileController {
     async createProfile(request, response) {
         const input = (0, profile_request_mapper_1.mapCreateProfileRequest)(request);
         if (input === null) {
-            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)("Invalid profile payload"));
+            response.status(response_status_1.ResponseStatusCode.BAD_REQUEST).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.BAD_REQUEST, "Invalid profile payload"));
             return;
         }
         try {
             const createdProfile = await this.profileService.createProfile(input);
-            response.status(201).json((0, profile_response_mapper_1.mapProfileResponse)(createdProfile));
+            response.status(response_status_1.ResponseStatusCode.OK).json((0, api_response_mapper_1.mapSuccessResponse)(response_status_1.ResponseStatusCode.OK, (0, profile_response_mapper_1.mapProfileResponse)(createdProfile)));
         }
         catch (error) {
             console.error("Failed to create profile", error);
-            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)("Internal Server Error"));
+            response.status(response_status_1.ResponseStatusCode.INTERNAL_SERVER_ERROR).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.INTERNAL_SERVER_ERROR, "Internal Server Error"));
         }
     }
     async getProfileById(request, response) {
-        const profileId = (0, profile_request_mapper_1.mapProfileByIdRequest)(request);
+        const profileId = (0, profile_request_mapper_1.mapProfileByIdQueryRequest)(request);
         if (profileId === null) {
-            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)("Invalid profile id"));
+            response.status(response_status_1.ResponseStatusCode.BAD_REQUEST).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.BAD_REQUEST, "Invalid profile id"));
             return;
         }
         try {
             const profile = await this.profileService.getProfileById(profileId);
             if (profile === null) {
-                response.status(404).json((0, api_response_mapper_1.mapErrorResponse)("Profile not found"));
+                response.status(response_status_1.ResponseStatusCode.NOT_FOUND).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.NOT_FOUND, "Profile not found"));
                 return;
             }
-            response.status(200).json((0, profile_response_mapper_1.mapProfileResponse)(profile));
+            response.status(response_status_1.ResponseStatusCode.OK).json((0, api_response_mapper_1.mapSuccessResponse)(response_status_1.ResponseStatusCode.OK, (0, profile_response_mapper_1.mapProfileResponse)(profile)));
         }
         catch (error) {
             console.error("Failed to get profile", error);
-            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)("Internal Server Error"));
+            response.status(response_status_1.ResponseStatusCode.INTERNAL_SERVER_ERROR).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.INTERNAL_SERVER_ERROR, "Internal Server Error"));
         }
     }
     async updateProfile(request, response) {
-        const profileId = (0, profile_request_mapper_1.mapProfileByIdRequest)(request);
+        const profileId = (0, profile_request_mapper_1.mapUpdateProfileIdRequest)(request);
         if (profileId === null) {
-            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)("Invalid profile id"));
+            response.status(response_status_1.ResponseStatusCode.BAD_REQUEST).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.BAD_REQUEST, "Invalid profile id"));
             return;
         }
         const input = (0, profile_request_mapper_1.mapUpdateProfileRequest)(request);
         if (input === null) {
-            response.status(400).json((0, api_response_mapper_1.mapErrorResponse)("Invalid profile update payload"));
+            response.status(response_status_1.ResponseStatusCode.BAD_REQUEST).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.BAD_REQUEST, "Invalid profile update payload"));
             return;
         }
         try {
             const updateResult = await this.profileService.updateProfile(profileId, input);
-            if (updateResult.kind === "not-found") {
-                response.status(404).json((0, api_response_mapper_1.mapErrorResponse)("Profile not found"));
+            if (updateResult.status === "not-found") {
+                response.status(response_status_1.ResponseStatusCode.NOT_FOUND).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.NOT_FOUND, "Profile not found"));
                 return;
             }
-            if (updateResult.kind === "inactive") {
-                response.status(409).json((0, api_response_mapper_1.mapErrorResponse)("Inactive profile cannot be updated"));
+            if (updateResult.status === "inactive") {
+                response.status(response_status_1.ResponseStatusCode.CONFLICT).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.CONFLICT, "Inactive profile cannot be updated"));
                 return;
             }
-            response.status(200).json((0, profile_response_mapper_1.mapProfileResponse)(updateResult.profile));
+            response.status(response_status_1.ResponseStatusCode.OK).json((0, api_response_mapper_1.mapSuccessResponse)(response_status_1.ResponseStatusCode.OK, (0, profile_response_mapper_1.mapProfileResponse)(updateResult.profile)));
         }
         catch (error) {
             console.error("Failed to update profile", error);
-            response.status(500).json((0, api_response_mapper_1.mapErrorResponse)("Internal Server Error"));
+            response.status(response_status_1.ResponseStatusCode.INTERNAL_SERVER_ERROR).json((0, api_response_mapper_1.mapErrorResponse)(response_status_1.ResponseStatusCode.INTERNAL_SERVER_ERROR, "Internal Server Error"));
         }
     }
 };
