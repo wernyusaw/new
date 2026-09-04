@@ -9,6 +9,7 @@ import { helloRouter } from "./src/routes/hello.route";
 import { greetingRouter } from "./src/routes/greeting.route";
 import { calculateRouter } from "./src/routes/calculate.route";
 import { profileRouter } from "./src/routes/profile.route";
+import { formatBangkokDateTime } from "./src/utils/date-time";
 
 const DEFAULT_PORT = 3000;
 const apiRouters: express.Router[] = [
@@ -101,7 +102,7 @@ export function createApp(): express.Application {
 
     const healthResponse: HealthResponse = {
       status: hasUnavailableDependency ? "degraded" : "ok",
-      timestamp: new Date().toISOString(),
+      timestamp: formatBangkokDateTime(),
       dependencies: {
         database: databaseHealth,
         kafka: kafkaHealth,

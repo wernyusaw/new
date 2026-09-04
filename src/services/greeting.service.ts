@@ -9,6 +9,7 @@ import type { EventPublisherPort } from "../interfaces/event-publisher.port";
 import type { GreetingRepositoryPort } from "../interfaces/greeting-repository.port";
 import type { GreetingServicePort } from "../interfaces/greeting-service.port";
 import { getGreetingMessage } from "../usecases/getGreetingMessageUsecase";
+import { formatBangkokDateTime } from "../utils/date-time";
 
 @injectable()
 export class GreetingService implements GreetingServicePort {
@@ -28,7 +29,7 @@ export class GreetingService implements GreetingServicePort {
     await this.eventPublisher.publishGreetingCreated({
       name: input.name,
       message,
-      createdAt: new Date().toISOString(),
+      createdAt: formatBangkokDateTime(),
     });
 
     return message;

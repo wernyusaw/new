@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 import type { CreateProfileRequestDto } from "../../dtos/request/profile/create-profile-request.dto";
 import type { UpdateProfileRequestDto } from "../../dtos/request/profile/update-profile-request.dto";
 import type {
@@ -7,50 +5,12 @@ import type {
   ProfileByIdRequestQueryInput,
   UpdateProfileRequestBodyInput,
 } from "../../models/request/profile-request.model";
-
-const nonEmptyStringSchema = z.string().trim().min(1);
-const dateSchema = nonEmptyStringSchema
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine((value) => {
-    const date = new Date(`${value}T00:00:00Z`);
-
-    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-  });
-const profileStatusSchema = z.enum(["active", "inactive"]);
-const profileAddressSchema = z.object({
-  line1: nonEmptyStringSchema,
-  line2: z.string().trim().optional(),
-  city: nonEmptyStringSchema,
-  state: nonEmptyStringSchema,
-  postalCode: nonEmptyStringSchema,
-  country: nonEmptyStringSchema,
-});
-const createProfileSchema = z.object({
-  firstName: nonEmptyStringSchema,
-  lastName: nonEmptyStringSchema,
-  email: z.string().trim().email(),
-  phone: nonEmptyStringSchema,
-  dateOfBirth: dateSchema,
-  status: profileStatusSchema,
-  address: profileAddressSchema,
-  preferences: z.object({
-    allowMarketing: z.boolean(),
-  }),
-});
-const updateProfileSchema = z.object({
-  firstName: nonEmptyStringSchema.optional(),
-  lastName: nonEmptyStringSchema.optional(),
-  email: z.string().trim().email().optional(),
-  phone: nonEmptyStringSchema.optional(),
-  dateOfBirth: dateSchema.optional(),
-  status: profileStatusSchema.optional(),
-  address: profileAddressSchema.partial().optional(),
-  preferences: z.object({ allowMarketing: z.boolean().optional() }).optional(),
-}).refine((value) => Object.keys(value).length > 0);
-const positiveIntegerSchema = z.coerce.number().int().positive();
+import { createProfileSchema } from "../../schemas/request/profile/create-profile.schema";
+import { profileIdSchema } from "../../schemas/request/profile/profile-id.schema";
+import { updateProfileSchema } from "../../schemas/request/profile/update-profile.schema";
 
 function parsePositiveInteger(value: unknown): number | null {
-  const result = positiveIntegerSchema.safeParse(value);
+  const result = profileIdSchema.safeParse(value);
 
   return result.success ? result.data : null;
 }

@@ -15,7 +15,7 @@ describe("Profile Master API", () => {
         lastName: "Johnson",
         email: "alice@example.com",
         phone: "0800000000",
-        dateOfBirth: "1990-01-20",
+        dateOfBirth: "20/01/1990",
         status: "active",
         address: {
           line1: "123 Main St",
@@ -70,7 +70,7 @@ describe("Profile Master API", () => {
         lastName: "Lee",
         email: "bob@example.com",
         phone: "0811111111",
-        dateOfBirth: "1988-02-10",
+        dateOfBirth: "10/02/1988",
         status: "active",
         address: {
           line1: "55 New Rd",
@@ -119,7 +119,7 @@ describe("Profile Master API", () => {
         lastName: "Tan",
         email: "carol@example.com",
         phone: "0822222222",
-        dateOfBirth: "1985-03-01",
+        dateOfBirth: "01/03/1985",
         status: "inactive",
         address: {
           line1: "77 Park",

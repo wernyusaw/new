@@ -67,6 +67,7 @@ Important runtime behavior:
 - GET /health
   - 200 when enabled dependencies are up
   - 503 when DB or Kafka is down
+  - timestamp format: `DD/MM/YYYY HH:mm:ss` in `Asia/Bangkok`
   - response contains:
     - status: ok | degraded
     - timestamp
@@ -162,7 +163,7 @@ Conventions:
   - eventType: greeting.created
   - name
   - message
-  - createdAt
+  - createdAt: `DD/MM/YYYY HH:mm:ss` in `Asia/Bangkok`
 - Kafka logs:
   - [Kafka] Publishing greeting.created ...
   - [Kafka] Published greeting.created ... partitions=<partition>@<offset>
@@ -225,7 +226,7 @@ Calculate verify:
 
 Profile verify:
 - create:
-  - curl.exe -X POST "http://localhost:3000/api/profiles" -H "Content-Type: application/json" -d "{\"firstName\":\"Alice\",\"lastName\":\"Johnson\",\"email\":\"alice@example.com\",\"phone\":\"0800000000\",\"dateOfBirth\":\"1990-01-20\",\"status\":\"active\",\"address\":{\"line1\":\"123 Main St\",\"city\":\"Bangkok\",\"state\":\"Bangkok\",\"postalCode\":\"10100\",\"country\":\"Thailand\"},\"preferences\":{\"allowMarketing\":true}}"
+  - curl.exe -X POST "http://localhost:3000/api/profiles" -H "Content-Type: application/json" -d "{\"firstName\":\"Alice\",\"lastName\":\"Johnson\",\"email\":\"alice@example.com\",\"phone\":\"0800000000\",\"dateOfBirth\":\"20/01/1990\",\"status\":\"active\",\"address\":{\"line1\":\"123 Main St\",\"city\":\"Bangkok\",\"state\":\"Bangkok\",\"postalCode\":\"10100\",\"country\":\"Thailand\"},\"preferences\":{\"allowMarketing\":true}}"
 - update (id in body):
   - curl.exe -X POST "http://localhost:3000/api/profiles/update" -H "Content-Type: application/json" -d "{\"id\":1,\"phone\":\"0899999999\"}"
 

@@ -1,13 +1,6 @@
-import { z } from "zod";
-
 import type { CalculateValueChangeRequestBodyInput } from "../../models/request/calculate-value-change-request.model";
 import type { CalculateValueChangeRequestDto } from "../../dtos/request/calculate/calculate-value-change-request.dto";
-
-const calculateValueChangeSchema = z.object({
-  currentValue: z.number(),
-  changeBy: z.number(),
-  operation: z.enum(["increase", "decrease"]),
-});
+import { calculateValueChangeSchema } from "../../schemas/request/calculate-value-change.schema";
 
 export function mapCalculateValueChangeRequest(
   input: CalculateValueChangeRequestBodyInput,

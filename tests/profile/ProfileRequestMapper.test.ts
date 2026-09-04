@@ -15,7 +15,7 @@ function buildValidCreateBody(): CreateProfileRequestBodyInput {
       lastName: " Johnson ",
       email: " alice@example.com ",
       phone: " 0800000000 ",
-      dateOfBirth: " 1990-01-20 ",
+      dateOfBirth: " 20/01/1990 ",
       status: "active",
       address: {
         line1: " 123 Main St ",
@@ -41,7 +41,7 @@ describe("mapCreateProfileRequest", () => {
       lastName: "Johnson",
       email: "alice@example.com",
       phone: "0800000000",
-      dateOfBirth: "1990-01-20",
+      dateOfBirth: "20/01/1990",
       status: "active",
       address: {
         line1: "123 Main St",
@@ -93,9 +93,9 @@ describe("mapCreateProfileRequest", () => {
     expect(mapCreateProfileRequest(input)).toBeNull();
   });
 
-  it("returns null when dateOfBirth is not a real ISO date", () => {
+  it("returns null when dateOfBirth is not a real Bangkok date", () => {
     const input = buildValidCreateBody();
-    input.body.dateOfBirth = "2024-02-31";
+    input.body.dateOfBirth = "31/02/2024";
 
     expect(mapCreateProfileRequest(input)).toBeNull();
   });
@@ -181,8 +181,8 @@ describe("mapUpdateProfileRequest", () => {
     expect(mapUpdateProfileRequest({ body: { id: "1", email: "invalid" } })).toBeNull();
   });
 
-  it("returns null when an updated dateOfBirth is not a real ISO date", () => {
-    expect(mapUpdateProfileRequest({ body: { id: "1", dateOfBirth: "2023-02-29" } })).toBeNull();
+  it("returns null when an updated dateOfBirth is not a real Bangkok date", () => {
+    expect(mapUpdateProfileRequest({ body: { id: "1", dateOfBirth: "29/02/2023" } })).toBeNull();
   });
 
   it("maps a partial address update", () => {
